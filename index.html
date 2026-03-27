@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Creator Pro | الإصدار الذهبي (للجوال والكمبيوتر)</title>
+    <title>Smart Creator Pro | الإصدار الذهبي المتكامل</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -29,7 +29,6 @@
             color: var(--text-main); display: flex; height: 100vh; overflow: hidden;
         }
 
-        /* --- التصميم الأساسي --- */
         .sidebar {
             width: 270px; background-color: var(--sidebar-bg); color: var(--sidebar-text);
             display: flex; flex-direction: column; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 10;
@@ -115,12 +114,11 @@
         .canvas-container {
             flex-grow: 1; display: flex; justify-content: center; align-items: center;
             background: repeating-conic-gradient(#f1f5f9 0% 25%, transparent 0% 50%) 50% / 20px 20px;
-            overflow: auto; padding: 20px; touch-action: none; /* مهم جداً لمنع تمرير الشاشة عند سحب الرقم بالجوال */
+            overflow: auto; padding: 20px; touch-action: none; 
         }
         canvas { box-shadow: 0 10px 30px rgba(0,0,0,0.15); cursor: grab; max-width: 100%; height: auto; }
         canvas:active { cursor: grabbing; }
 
-        /* --- دعم شاشات الجوال (Responsive Media Queries) --- */
         @media (max-width: 768px) {
             body { flex-direction: column; height: 100vh; overflow: auto; }
             .sidebar { width: 100%; flex-direction: column; box-shadow: none; z-index: 100; border-bottom: 1px solid #333; }
@@ -131,13 +129,12 @@
             .main-wrapper { overflow: visible; }
             .topbar { flex-direction: column; align-items: stretch; text-align: center; }
             .action-btns { justify-content: center; width: 100%; }
-            .btn { flex: 1; } /* أزرار متساوية على الجوال */
+            .btn { flex: 1; } 
             .workspace { flex-direction: column; padding: 15px; gap: 15px; }
             .controls-panel { width: 100%; }
             .preview-panel { min-height: 400px; }
         }
 
-        /* --- الملحقات الأخرى (نفسها) --- */
         #loaderOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.95); z-index: 9999; display: none; 
@@ -225,7 +222,13 @@
                         <div class="form-group"><label>عرض الصورة (px)</label><input type="number" id="imgWidthPx" oninput="autoSaveAndUpdate()"></div>
                         <div class="form-group"><label>طول الصورة (px)</label><input type="number" id="imgHeightPx" oninput="autoSaveAndUpdate()"></div>
                     </div>
+                    
                     <div class="form-row">
+                        <div class="form-group"><label>حجم الإطار (0 للإلغاء)</label><input type="number" id="borderSize" value="0" min="0" oninput="autoSaveAndUpdate()"></div>
+                        <div class="form-group"><label>لون الإطار</label><input type="color" id="borderColor" value="#000000" oninput="autoSaveAndUpdate()"></div>
+                    </div>
+
+                    <div class="form-row" style="border-top: 1px dashed var(--border); padding-top: 15px;">
                         <div class="form-group"><label>عرض الطباعة (mm)</label><input type="number" id="cardWidthMM" value="52.5" oninput="autoSaveAndUpdate()"></div>
                         <div class="form-group"><label>طول الطباعة (mm)</label><input type="number" id="cardHeightMM" value="24.75" oninput="autoSaveAndUpdate()"></div>
                     </div>
@@ -339,8 +342,7 @@
                     document.getElementById('imgHeightPx').value = img.height;
                     centerText();
                     
-                    // حفظ الصورة الأصلية بالذاكرة
-                    try { localStorage.setItem('smartCreatorSavedImage', originalImgData); } catch(e) { console.warn("حجم الصورة كبير جداً على الذاكرة"); }
+                    try { localStorage.setItem('smartCreatorSavedImage', originalImgData); } catch(e) { console.warn("حجم الصورة كبير"); }
                 }
                 img.src = event.target.result;
             }
@@ -370,6 +372,10 @@
             const spacing = parseInt(document.getElementById('letterSpacing').value) || 0;
             const fontSize = parseInt(document.getElementById('fontSize').value) || 40;
             const textColor = document.getElementById('textColor').value || '#000000';
+            
+            // قراءة الإطار
+            const borderSize = parseInt(document.getElementById('borderSize').value) || 0;
+            const borderColor = document.getElementById('borderColor').value || '#000000';
 
             document.getElementById('spacingDisplay').innerText = spacing;
 
@@ -378,6 +384,13 @@
             ctx.clearRect(0, 0, customW, customH);
             ctx.drawImage(img, 0, 0, customW, customH);
             
+            // رسم الإطار على الكانفاس
+            if (borderSize > 0) {
+                ctx.lineWidth = borderSize;
+                ctx.strokeStyle = borderColor;
+                ctx.strokeRect(borderSize/2, borderSize/2, customW - borderSize, customH - borderSize);
+            }
+
             ctx.font = `bold ${fontSize}px 'Arial', sans-serif`;
             ctx.fillStyle = textColor;
             ctx.textBaseline = "middle";
@@ -403,6 +416,8 @@
             const settings = {
                 imgWidthPx: document.getElementById('imgWidthPx').value,
                 imgHeightPx: document.getElementById('imgHeightPx').value,
+                borderSize: document.getElementById('borderSize').value,
+                borderColor: document.getElementById('borderColor').value,
                 cardWidthMM: document.getElementById('cardWidthMM').value,
                 cardHeightMM: document.getElementById('cardHeightMM').value,
                 letterSpacing: document.getElementById('letterSpacing').value,
@@ -417,9 +432,7 @@
             localStorage.setItem('smartCreatorMobileSettings', JSON.stringify(settings));
         }
 
-        // استرجاع البيانات عند فتح التطبيق
         window.onload = function() {
-            // 1. استرجاع الإعدادات
             const saved = localStorage.getItem('smartCreatorMobileSettings');
             if (saved) {
                 const settings = JSON.parse(saved);
@@ -427,7 +440,6 @@
                     if (document.getElementById(key)) document.getElementById(key).value = settings[key];
                 }
             }
-            // 2. استرجاع الصورة إن وجدت
             const savedImage = localStorage.getItem('smartCreatorSavedImage');
             if(savedImage) {
                 originalImgData = savedImage;
@@ -441,19 +453,14 @@
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
-            // التحقق مما إذا كان الحدث لـ موبايل (Touches) أو كمبيوتر (clientX)
             const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
             const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
-            
-            return {
-                x: (clientX - rect.left) * scaleX,
-                y: (clientY - rect.top) * scaleY
-            };
+            return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
         }
 
         function startDrag(e) {
             if(!img.src) return;
-            e.preventDefault(); // لمنع تحرك الشاشة أثناء سحب الرقم بالجوال
+            e.preventDefault(); 
             const pos = getEventPos(canvas, e);
             startDragX = pos.x;
             startDragY = pos.y;
@@ -464,7 +471,7 @@
 
         function doDrag(e) {
             if (!isDragging) return;
-            e.preventDefault(); // لمنع تحرك الشاشة
+            e.preventDefault(); 
             const pos = getEventPos(canvas, e);
             document.getElementById('textX').value = Math.round(initialTextX + (pos.x - startDragX));
             document.getElementById('textY').value = Math.round(initialTextY + (pos.y - startDragY));
@@ -473,12 +480,10 @@
 
         function stopDrag() { isDragging = false; }
 
-        // أحداث الماوس
         canvas.addEventListener('mousedown', startDrag);
         canvas.addEventListener('mousemove', doDrag);
         window.addEventListener('mouseup', stopDrag);
         
-        // أحداث اللمس (مهمة جداً للجوال)
         canvas.addEventListener('touchstart', startDrag, {passive: false});
         canvas.addEventListener('touchmove', doDrag, {passive: false});
         window.addEventListener('touchend', stopDrag);
@@ -522,6 +527,10 @@
                 const fontSizePt = (fontSizePx * scaleY) * 2.83465; 
 
                 const rgbText = hexToRgb(document.getElementById('textColor').value);
+                
+                // قراءة الإطار للـ PDF
+                const borderSize = parseInt(document.getElementById('borderSize').value) || 0;
+                const rgbBorder = hexToRgb(document.getElementById('borderColor').value || '#000000');
 
                 for (let i = 0; i < validCodes.length; i++) {
                     if (i > 0 && i % cardsPerPage === 0) pdf.addPage();
@@ -533,6 +542,14 @@
                     const pdfY = rowPos * cardHeightMM;
 
                     pdf.addImage(originalImgData, 'JPEG', pdfX, pdfY, cardWidthMM, cardHeightMM, 'BG_CARD', 'FAST');
+
+                    // رسم الإطار في الـ PDF (Vector)
+                    if (borderSize > 0) {
+                        const bSizeMM = borderSize * scaleX;
+                        pdf.setLineWidth(bSizeMM);
+                        pdf.setDrawColor(rgbBorder.r, rgbBorder.g, rgbBorder.b);
+                        pdf.rect(pdfX + (bSizeMM/2), pdfY + (bSizeMM/2), cardWidthMM - bSizeMM, cardHeightMM - bSizeMM);
+                    }
 
                     pdf.setFontSize(fontSizePt);
                     pdf.setFont("helvetica", "bold");
