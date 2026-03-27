@@ -255,7 +255,13 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-header"><i class="fas fa-database"></i> البيانات (10 أرقام)</div>
+                    <div class="card-header"><i class="fas fa-database"></i> البيانات والطباعة</div>
+                    
+                    <div class="form-row" style="background: rgba(123, 97, 255, 0.05); padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px dashed var(--primary);">
+                        <div class="form-group"><label style="color: var(--primary);">هامش علوي للورقة (mm)</label><input type="number" id="marginTopMM" value="5" oninput="autoSaveAndUpdate()"></div>
+                        <div class="form-group"><label style="color: var(--primary);">هامش جانبي (mm)</label><input type="number" id="marginLeftMM" value="0" oninput="autoSaveAndUpdate()"></div>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group"><label>أعمدة بصفحة A4</label><input type="number" id="pdfCols" value="4" oninput="autoSaveAndUpdate()"></div>
                         <div class="form-group"><label>صفوف بصفحة A4</label><input type="number" id="pdfRows" value="12" oninput="autoSaveAndUpdate()"></div>
@@ -373,7 +379,6 @@
             const fontSize = parseInt(document.getElementById('fontSize').value) || 40;
             const textColor = document.getElementById('textColor').value || '#000000';
             
-            // قراءة الإطار
             const borderSize = parseInt(document.getElementById('borderSize').value) || 0;
             const borderColor = document.getElementById('borderColor').value || '#000000';
 
@@ -384,7 +389,6 @@
             ctx.clearRect(0, 0, customW, customH);
             ctx.drawImage(img, 0, 0, customW, customH);
             
-            // رسم الإطار على الكانفاس
             if (borderSize > 0) {
                 ctx.lineWidth = borderSize;
                 ctx.strokeStyle = borderColor;
@@ -420,6 +424,8 @@
                 borderColor: document.getElementById('borderColor').value,
                 cardWidthMM: document.getElementById('cardWidthMM').value,
                 cardHeightMM: document.getElementById('cardHeightMM').value,
+                marginTopMM: document.getElementById('marginTopMM').value, // تم إضافة الهامش العلوي
+                marginLeftMM: document.getElementById('marginLeftMM').value, // تم إضافة الهامش الجانبي
                 letterSpacing: document.getElementById('letterSpacing').value,
                 fontSize: document.getElementById('fontSize').value,
                 textColor: document.getElementById('textColor').value,
@@ -448,7 +454,7 @@
             }
         }
 
-        // --- دعم السحب بالماوس (للكمبيوتر) واللمس (للجوال) ---
+        // --- دعم السحب ---
         function getEventPos(canvas, evt) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -493,7 +499,7 @@
             return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 0, g: 0, b: 0 };
         }
 
-        // --- توليد PDF السريع للموبايل ---
+        // --- توليد PDF (الطباعة مع الهوامش) ---
         function generateVectorPDF() {
             if (!img.src || !originalImgData) { showToast("الرجاء رفع صورة الكرت أولاً!", "var(--danger)", "fa-times"); return; }
 
@@ -514,6 +520,10 @@
                 
                 const cardWidthMM = parseFloat(document.getElementById('cardWidthMM').value);
                 const cardHeightMM = parseFloat(document.getElementById('cardHeightMM').value);
+                
+                // حساب الهوامش لطباعة PDF
+                const pageMarginTop = parseFloat(document.getElementById('marginTopMM').value) || 0;
+                const pageMarginLeft = parseFloat(document.getElementById('marginLeftMM').value) || 0;
 
                 const customW = parseInt(document.getElementById('imgWidthPx').value) || img.width;
                 const customH = parseInt(document.getElementById('imgHeightPx').value) || img.height;
@@ -528,7 +538,6 @@
 
                 const rgbText = hexToRgb(document.getElementById('textColor').value);
                 
-                // قراءة الإطار للـ PDF
                 const borderSize = parseInt(document.getElementById('borderSize').value) || 0;
                 const rgbBorder = hexToRgb(document.getElementById('borderColor').value || '#000000');
 
@@ -538,12 +547,13 @@
                     const indexInPage = i % cardsPerPage;
                     const colPos = indexInPage % cols;
                     const rowPos = Math.floor(indexInPage / cols);
-                    const pdfX = colPos * cardWidthMM;
-                    const pdfY = rowPos * cardHeightMM;
+                    
+                    // إضافة الهوامش إلى إحداثيات الطباعة
+                    const pdfX = pageMarginLeft + (colPos * cardWidthMM);
+                    const pdfY = pageMarginTop + (rowPos * cardHeightMM);
 
                     pdf.addImage(originalImgData, 'JPEG', pdfX, pdfY, cardWidthMM, cardHeightMM, 'BG_CARD', 'FAST');
 
-                    // رسم الإطار في الـ PDF (Vector)
                     if (borderSize > 0) {
                         const bSizeMM = borderSize * scaleX;
                         pdf.setLineWidth(bSizeMM);
