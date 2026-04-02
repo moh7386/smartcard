@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Creator Pro | الإصدار المطلق</title>
+    <title>Smart Creator Pro | الاستديو الذهبي المفتوح</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
         
@@ -25,44 +27,21 @@
             --sidebar-text: #f8fafc;
         }
 
-        body {
-            font-family: 'Tajawal', sans-serif; margin: 0; background-color: var(--bg-app);
-            color: var(--text-main); display: flex; height: 100vh; overflow: hidden;
-        }
+        body { font-family: 'Tajawal', sans-serif; margin: 0; background-color: var(--bg-app); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        .sidebar {
-            width: 270px; background-color: var(--sidebar-bg); color: var(--sidebar-text);
-            display: flex; flex-direction: column; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 10;
-        }
-        .logo-area {
-            padding: 25px 20px; text-align: center; font-size: 20px; font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), #5e48cc); color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        .sidebar { width: 270px; background-color: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 10; }
+        .logo-area { padding: 25px 20px; text-align: center; font-size: 20px; font-weight: 700; background: linear-gradient(135deg, var(--primary), #5e48cc); color: white; }
         .logo-area span { font-size: 11px; display: block; font-weight: 400; opacity: 0.8; margin-top: 5px; }
         .nav-menu { flex-grow: 1; padding-top: 20px; overflow-y: auto; }
-        .nav-item {
-            padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px;
-            color: #cbd5e1; transition: all 0.3s; border-right: 4px solid transparent; white-space: nowrap;
-        }
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(255,255,255,0.05); color: white; border-right-color: var(--primary);
-        }
+        .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: #cbd5e1; transition: all 0.3s; border-right: 4px solid transparent; white-space: nowrap; }
+        .nav-item:hover, .nav-item.active { background-color: rgba(255,255,255,0.05); color: white; border-right-color: var(--primary); }
 
         .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%; }
 
-        .topbar {
-            background: var(--panel-bg); min-height: 75px; padding: 15px 25px; display: flex;
-            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02); flex-wrap: wrap; gap: 10px;
-        }
+        .topbar { background: var(--panel-bg); min-height: 75px; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); flex-wrap: wrap; gap: 10px; }
         .page-title { font-size: 18px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
         .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-        .btn {
-            padding: 10px 15px; border-radius: 6px; border: none; font-family: inherit;
-            font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 6px; color: white;
-        }
+        .btn { padding: 10px 15px; border-radius: 6px; border: none; font-family: inherit; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; color: white; }
         .btn-outline { background: white; border: 1px solid var(--border); color: var(--text-main); }
         .btn-outline:hover { background: #f8fafc; }
         .btn-success { background: var(--success); }
@@ -73,14 +52,8 @@
         .workspace { padding: 25px; display: flex; gap: 25px; flex-grow: 1; overflow-y: auto; flex-wrap: wrap; align-content: flex-start;}
         .controls-panel { width: 360px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; max-width: 100%;}
         
-        .card {
-            background: var(--panel-bg); border-radius: 12px; padding: 20px;
-            border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); width: 100%; box-sizing: border-box;
-        }
-        .card-header { 
-            font-weight: 700; font-size: 15px; margin-bottom: 15px; color: var(--text-main); 
-            display: flex; align-items: center; gap: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;
-        }
+        .card { background: var(--panel-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); width: 100%; box-sizing: border-box; }
+        .card-header { font-weight: 700; font-size: 15px; margin-bottom: 15px; color: var(--text-main); display: flex; align-items: center; gap: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; }
         .card-header i { color: var(--primary); }
         
         .form-group { margin-bottom: 15px; width: 100%;}
@@ -88,50 +61,28 @@
         .form-row .form-group { flex: 1; min-width: 45%; }
         label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
         
-        input[type="number"], input[type="text"], textarea {
-            width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; 
-            font-family: inherit; font-size: 14px; box-sizing: border-box; transition: 0.3s;
-        }
+        input[type="number"], input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 14px; box-sizing: border-box; transition: 0.3s; }
         input:focus, textarea:focus { border-color: var(--primary); outline: none; }
         input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
         input[type="color"] { width: 100%; height: 40px; padding: 0; border: none; border-radius: 6px; cursor: pointer; }
         
-        .upload-area {
-            border: 2px dashed var(--primary); border-radius: 8px; padding: 15px; text-align: center;
-            cursor: pointer; background: rgba(123, 97, 255, 0.05); position: relative; transition: 0.3s; margin-bottom: 15px;
-        }
+        .upload-area { border: 2px dashed var(--primary); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; background: rgba(123, 97, 255, 0.05); position: relative; transition: 0.3s; margin-bottom: 15px; }
         .upload-area input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
-        /* --- العداد الذكي (Live Stats) --- */
-        .stats-box {
-            padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700; 
-            margin-bottom: 15px; text-align: center; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        .stats-box { padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-bottom: 15px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .stats-box.success { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
         .stats-box.warning { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
-        .preview-panel {
-            flex-grow: 1; background: var(--panel-bg); border-radius: 12px; border: 1px solid var(--border);
-            display: flex; flex-direction: column; overflow: hidden; min-width: 300px;
-        }
-        .preview-header {
-            padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex;
-            justify-content: space-between; align-items: center; background: #f8fafc; flex-wrap: wrap; gap: 10px;
-        }
-        .badge { background: #e0e7ff; color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .preview-panel { flex-grow: 1; background: var(--panel-bg); border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; min-width: 300px; }
+        .preview-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; flex-wrap: wrap; gap: 10px; }
         
-        .canvas-container {
-            flex-grow: 1; display: flex; justify-content: center; align-items: center;
-            background: repeating-conic-gradient(#f1f5f9 0% 25%, transparent 0% 50%) 50% / 20px 20px;
-            overflow: auto; padding: 20px; touch-action: none; 
-        }
+        .canvas-container { flex-grow: 1; display: flex; justify-content: center; align-items: center; background: repeating-conic-gradient(#f1f5f9 0% 25%, transparent 0% 50%) 50% / 20px 20px; overflow: auto; padding: 20px; touch-action: none; }
         canvas { box-shadow: 0 10px 30px rgba(0,0,0,0.15); cursor: grab; max-width: 100%; height: auto; }
         canvas:active { cursor: grabbing; }
 
         @media (max-width: 768px) {
             body { flex-direction: column; height: 100vh; overflow: auto; }
             .sidebar { width: 100%; flex-direction: column; box-shadow: none; z-index: 100; border-bottom: 1px solid #333; }
-            .logo-area { padding: 15px; }
             .nav-menu { display: flex; flex-direction: row; overflow-x: auto; padding-top: 0; padding-bottom: 5px; }
             .nav-item { padding: 10px 15px; border-right: none; border-bottom: 3px solid transparent; font-size: 13px; }
             .nav-item:hover, .nav-item.active { border-right: none; border-bottom-color: var(--primary); background: transparent; }
@@ -144,31 +95,16 @@
             .preview-panel { min-height: 400px; }
         }
 
-        #loaderOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95); z-index: 9999; display: none; 
-            flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;
-        }
+        #loaderOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; pointer-events: none;}
-        .toast {
-            background: white; border-right: 4px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            padding: 15px 20px; border-radius: 8px; display: flex; align-items: center; gap: 10px;
-            font-weight: 700; color: var(--text-main); transform: translateY(100px); opacity: 0; transition: 0.4s; pointer-events: auto;
-        }
+        .toast { background: white; border-right: 4px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.2); padding: 15px 20px; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text-main); transform: translateY(100px); opacity: 0; transition: 0.4s; pointer-events: auto; }
         .toast.show { transform: translateY(0); opacity: 1; }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1000; display: none;
-            justify-content: center; align-items: center; backdrop-filter: blur(3px); padding: 15px; box-sizing: border-box;
-        }
-        .modal-content {
-            background: white; width: 500px; max-width: 100%; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 20px; display: flex; flex-direction: column; gap: 15px;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(3px); padding: 15px; box-sizing: border-box; }
+        .modal-content { background: white; width: 500px; max-width: 100%; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
     </style>
@@ -188,8 +124,7 @@
                 <h3 style="margin:0; color:var(--primary); font-size: 16px;"><i class="fas fa-file-export"></i> المستخرج الذكي للأكواد</h3>
                 <button class="close-btn" onclick="toggleModal(false)"><i class="fas fa-times"></i></button>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: -5px; text-align: center;">يدعم ملفات الوورد وملفات PDF (مثل UniFi وغيرها).</p>
-            
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: -5px; text-align: center;">الخوارزمية الجديدة تصطاد الكروت بدقة 100% من ملفات UniFi.</p>
             <div class="upload-area" style="margin-bottom: 5px;">
                 <input type="file" id="documentFileInput" accept=".docx, .pdf">
                 <i class="fas fa-file-pdf" style="font-size: 20px; color: #e74c3c; margin-left: 10px;"></i>
@@ -208,15 +143,14 @@
             <div class="nav-item"><i class="fas fa-chart-pie"></i> لوحة المعلومات</div>
             <div class="nav-item" style="color: var(--success);" onclick="toggleModal(true)"><i class="fas fa-magic"></i> استخراج الأكواد</div>
             <div class="nav-item active"><i class="fas fa-paint-brush"></i> التصميم</div>
-            <div class="nav-item"><i class="fas fa-cog"></i> الإعدادات</div>
         </div>
     </div>
 
     <div class="main-wrapper">
         <div class="topbar">
-            <div class="page-title"><i class="fas fa-bolt"></i> محرر الكروت الذكي</div>
+            <div class="page-title"><i class="fas fa-bolt"></i> محرر الكروت المفتوح</div>
             <div class="action-btns">
-                <button class="btn btn-outline" onclick="centerText()"><i class="fas fa-align-center"></i> توسيط</button>
+                <button class="btn btn-outline" onclick="centerText()"><i class="fas fa-align-center"></i> توسيط الأرقام</button>
                 <button class="btn btn-primary" onclick="generateVectorPDF()"><i class="fas fa-print"></i> توليد PDF متعدد الصفحات</button>
             </div>
         </div>
@@ -228,11 +162,11 @@
                     <div class="card-header"><i class="fas fa-image"></i> أبعاد وتصميم الكرت</div>
                     <div class="upload-area">
                         <input type="file" id="imageLoader" accept="image/*">
-                        <i class="fas fa-cloud-upload-alt"></i><span style="font-size:12px;">رفع أو تغيير صورة الكرت</span>
+                        <i class="fas fa-cloud-upload-alt"></i><span style="font-size:12px;">رفع صورتك عالية الدقة</span>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>عرض الصورة (px)</label><input type="number" id="imgWidthPx" oninput="autoSaveAndUpdate()"></div>
-                        <div class="form-group"><label>طول الصورة (px)</label><input type="number" id="imgHeightPx" oninput="autoSaveAndUpdate()"></div>
+                        <div class="form-group"><label>عرض الصورة الأصلية (px)</label><input type="number" id="imgWidthPx" oninput="autoSaveAndUpdate()"></div>
+                        <div class="form-group"><label>طول الصورة الأصلية (px)</label><input type="number" id="imgHeightPx" oninput="autoSaveAndUpdate()"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>حجم الإطار (0 للإلغاء)</label><input type="number" id="borderSize" value="0" min="0" oninput="autoSaveAndUpdate()"></div>
@@ -244,17 +178,23 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header"><i class="fas fa-font"></i> ضبط الرقم السري</div>
-                    <p style="font-size: 11px; color: var(--danger); margin-top: -10px; margin-bottom: 15px;">* اسحب الرقم بإصبعك/الماوس بالشاشة للضبط</p>
+                <div class="card" style="border-color: var(--primary); box-shadow: 0 0 10px rgba(123,97,255,0.1);">
+                    <div class="card-header" style="color: var(--primary);"><i class="fas fa-font"></i> ضبط الرقم السري</div>
+                    <p style="font-size: 11px; color: var(--danger); margin-top: -10px; margin-bottom: 15px;">* اسحب الرقم بالشاشة للضبط الحر.</p>
+                    
                     <div class="form-row">
                         <div class="form-group"><label>X (يمين/يسار)</label><input type="number" id="textX" value="150" oninput="autoSaveAndUpdate()"></div>
                         <div class="form-group"><label>Y (أعلى/أسفل)</label><input type="number" id="textY" value="150" oninput="autoSaveAndUpdate()"></div>
                     </div>
-                    <div class="form-group">
-                        <label>تباعد الخانات: <span id="spacingDisplay" class="badge">40</span></label>
-                        <input type="range" id="letterSpacing" min="0" max="300" value="40" oninput="autoSaveAndUpdate()">
+
+                    <div class="form-group" style="width: 100%;">
+                        <label>تباعد الخانات لتعبئة المربعات:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="range" id="letterSpacingRange" min="0" max="3000" value="40" oninput="syncSpacing('range')" style="flex: 1;">
+                            <input type="number" id="letterSpacing" value="40" oninput="syncSpacing('number')" style="width: 80px; text-align: center; border-color: var(--primary);">
+                        </div>
                     </div>
+                    
                     <div class="form-row">
                         <div class="form-group"><label>حجم الخط</label><input type="number" id="fontSize" value="45" oninput="autoSaveAndUpdate()"></div>
                         <div class="form-group"><label>لون الخط</label><input type="color" id="textColor" value="#000000" oninput="autoSaveAndUpdate()"></div>
@@ -264,12 +204,10 @@
                 <div class="card">
                     <div class="card-header"><i class="fas fa-database"></i> البيانات والطباعة</div>
                     
-                    <div id="liveStats" class="stats-box warning">
-                        <i class="fas fa-exclamation-circle"></i> لا توجد أكواد صالحة للطباعة.
-                    </div>
+                    <div id="liveStats" class="stats-box warning"><i class="fas fa-exclamation-circle"></i> لا توجد أكواد صالحة للطباعة.</div>
 
                     <div class="form-row" style="background: rgba(123, 97, 255, 0.05); padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px dashed var(--primary);">
-                        <div class="form-group"><label style="color: var(--primary);">هامش علوي للورقة (mm)</label><input type="number" id="marginTopMM" value="5" oninput="autoSaveAndUpdate()"></div>
+                        <div class="form-group"><label style="color: var(--primary);">هامش علوي (mm)</label><input type="number" id="marginTopMM" value="5" oninput="autoSaveAndUpdate()"></div>
                         <div class="form-group"><label style="color: var(--primary);">هامش جانبي (mm)</label><input type="number" id="marginLeftMM" value="0" oninput="autoSaveAndUpdate()"></div>
                     </div>
 
@@ -288,7 +226,7 @@
 
             <div class="preview-panel">
                 <div class="preview-header">
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);"><i class="fas fa-mobile-alt"></i> شاشة المعاينة (تدعم اللمس)</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);"><i class="fas fa-mobile-alt"></i> شاشة المعاينة الحية</span>
                 </div>
                 <div class="canvas-container">
                     <canvas id="previewCanvas"></canvas>
@@ -319,23 +257,29 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 2500);
         }
 
-        // الاستخراج الذكي المحدث
+        function syncSpacing(source) {
+            if (source === 'range') {
+                document.getElementById('letterSpacing').value = document.getElementById('letterSpacingRange').value;
+            } else {
+                document.getElementById('letterSpacingRange').value = document.getElementById('letterSpacing').value;
+            }
+            autoSaveAndUpdate();
+        }
+
+        // --- الاستخراج الذكي (المدرع) ---
         function toggleModal(show) { document.getElementById('extractorModal').style.display = show ? 'flex' : 'none'; }
         
         document.getElementById('documentFileInput').addEventListener('change', async function(event) {
             const file = this.files[0];
             if (!file) return;
             const statsElement = document.getElementById('extractorStats');
-            statsElement.innerText = "جاري القراءة والتحليل...";
+            statsElement.innerText = "جاري القراءة والتحليل الدقيق...";
             statsElement.style.color = "var(--primary)";
             const fileExt = file.name.split('.').pop().toLowerCase();
             
             if (fileExt === 'docx') extractFromWord(file);
             else if (fileExt === 'pdf') extractFromPDF(file);
-            else {
-                statsElement.innerText = "صيغة الملف غير مدعومة.";
-                statsElement.style.color = "var(--danger)";
-            }
+            else { statsElement.innerText = "صيغة غير مدعومة."; statsElement.style.color = "var(--danger)"; }
         });
 
         function extractFromWord(file) {
@@ -343,7 +287,7 @@
             reader.onload = function(event) {
                 mammoth.extractRawText({arrayBuffer: reader.result})
                     .then(result => processExtractedText(result.value))
-                    .catch(err => { document.getElementById('extractorStats').innerText = "حدث خطأ أثناء قراءة ملف الوورد."; });
+                    .catch(err => { document.getElementById('extractorStats').innerText = "حدث خطأ."; });
             };
             reader.readAsArrayBuffer(file);
         }
@@ -356,26 +300,35 @@
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent();
-                    const pageText = textContent.items.map(item => item.str).join("");
-                    fullText += pageText + "\n";
+                    const pageText = textContent.items.map(item => item.str).join(" ");
+                    fullText += pageText + " \n ";
                 }
                 processExtractedText(fullText);
-            } catch (err) { document.getElementById('extractorStats').innerText = "حدث خطأ أثناء قراءة ملف الـ PDF."; }
+            } catch (err) { document.getElementById('extractorStats').innerText = "حدث خطأ."; }
         }
 
+        // الخوارزمية التي تم تصحيحها لتقرأ الكروت حتى لو اندمجت في جداول الـ PDF
         function processExtractedText(text) {
-            const cleanedText = text.replace(/\s+/g, '');
-            const regex = /(?:^|[^\d])(\d{5}-?\d{5})(?=[^\d]|$)/g;
+            // الخوارزمية تبحث عن 5 أرقام، بينها شرطة (أو مسافة)، ثم 5 أرقام، بغض النظر عما يحيط بها
+            const regex = /(\d{5}\s*[-_–—]\s*\d{5})|(\b\d{10}\b)/g;
             let match;
             let extracted = [];
-            while ((match = regex.exec(cleanedText)) !== null) {
-                extracted.push(match[1].replace('-', ''));
+            
+            while ((match = regex.exec(text)) !== null) {
+                // إزالة الشرطة ليصبح الرقم 10 خانات صافية للطباعة
+                let cleanCode = match[0].replace(/[^\d]/g, '');
+                if(cleanCode.length === 10) {
+                    extracted.push(cleanCode);
+                }
             }
+            
+            // إزالة المتكررات
             const uniqueCodes = [...new Set(extracted)];
+            
             const statsElement = document.getElementById('extractorStats');
             if (uniqueCodes.length > 0) {
                 document.getElementById('extractedCodesArea').value = uniqueCodes.join('\n');
-                statsElement.innerText = `تم استخراج ${uniqueCodes.length} كرت بنجاح! 🎉`;
+                statsElement.innerHTML = `تم العثور على <b>${uniqueCodes.length}</b> كرت بنجاح! 🎉`;
                 statsElement.style.color = "var(--success)";
             } else {
                 document.getElementById('extractedCodesArea').value = "";
@@ -393,16 +346,29 @@
             showToast("تم نقل الأكواد للاستديو!");
         }
 
-        // معالجة الصور
+        // --- معالجة الصور ---
         document.getElementById('imageLoader').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 originalImgData = event.target.result; 
                 img.onload = function() {
-                    document.getElementById('imgWidthPx').value = img.width;
-                    document.getElementById('imgHeightPx').value = img.height;
+                    const w = img.width;
+                    const h = img.height;
+                    
+                    document.getElementById('imgWidthPx').value = w;
+                    document.getElementById('imgHeightPx').value = h;
+                    
+                    const autoFont = Math.round(h * 0.12);
+                    const autoSpace = Math.round(w * 0.08);
+                    
+                    document.getElementById('fontSize').value = autoFont;
+                    document.getElementById('letterSpacing').value = autoSpace;
+                    document.getElementById('letterSpacingRange').value = autoSpace;
+                    document.getElementById('letterSpacingRange').max = Math.round(w / 1.5);
+                    
                     centerText();
                     try { localStorage.setItem('smartCreatorSavedImage', originalImgData); } catch(e) {}
+                    showToast("تم ضبط المقاسات تلقائياً لتناسب صورتك!");
                 }
                 img.src = event.target.result;
             }
@@ -435,8 +401,6 @@
             const borderSize = parseInt(document.getElementById('borderSize').value) || 0;
             const borderColor = document.getElementById('borderColor').value || '#000000';
 
-            document.getElementById('spacingDisplay').innerText = spacing;
-
             canvas.width = customW;
             canvas.height = customH;
             ctx.clearRect(0, 0, customW, customH);
@@ -467,7 +431,6 @@
             }
         }
 
-        // تحديث العداد الذكي
         function updateStats() {
             const rawCodes = document.getElementById('bulkCodes').value.split('\n').filter(c => c.trim() !== '');
             const validCodes = rawCodes.map(cleanCode).filter(c => c.length > 0);
@@ -488,7 +451,7 @@
 
         function autoSaveAndUpdate() {
             updatePreview();
-            updateStats(); // تحديث العداد
+            updateStats();
             const settings = {
                 imgWidthPx: document.getElementById('imgWidthPx').value,
                 imgHeightPx: document.getElementById('imgHeightPx').value,
@@ -517,6 +480,7 @@
                 for (const key in settings) {
                     if (document.getElementById(key)) document.getElementById(key).value = settings[key];
                 }
+                if (settings.letterSpacing) document.getElementById('letterSpacingRange').value = settings.letterSpacing;
             }
             const savedImage = localStorage.getItem('smartCreatorSavedImage');
             if(savedImage) {
@@ -528,7 +492,6 @@
             }
         }
 
-        // السحب واللمس
         function getEventPos(canvas, evt) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -645,7 +608,7 @@
                     }
                 }
 
-                pdf.save('MultiPage_Cards.pdf');
+                pdf.save('Cards_Export.pdf');
                 document.getElementById('loaderOverlay').style.display = 'none';
                 showToast("اكتمل التوليد بنجاح!");
 
