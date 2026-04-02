@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Creator Pro | الإصدار الذهبي المتكامل</title>
+    <title>Smart Creator Pro | الاستديو الذهبي المتكامل</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
         
@@ -176,25 +180,28 @@
     <div class="modal-overlay" id="extractorModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 style="margin:0; color:var(--primary); font-size: 16px;"><i class="fas fa-file-word"></i> استخراج الأكواد من Word</h3>
+                <h3 style="margin:0; color:var(--primary); font-size: 16px;"><i class="fas fa-file-export"></i> المستخرج الذكي للأكواد</h3>
                 <button class="close-btn" onclick="toggleModal(false)"><i class="fas fa-times"></i></button>
             </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: -5px; text-align: center;">يدعم ملفات الوورد (DOCX) وملفات (PDF) الخاصة بـ UniFi وغيرها.</p>
+            
             <div class="upload-area" style="margin-bottom: 5px;">
-                <input type="file" id="wordFileInput" accept=".docx">
-                <i class="fas fa-file-alt" style="font-size: 20px;"></i>
-                <span style="font-size: 12px;">انقر لاختيار ملف وورد (.docx)</span>
+                <input type="file" id="documentFileInput" accept=".docx, .pdf">
+                <i class="fas fa-file-pdf" style="font-size: 20px; color: #e74c3c; margin-left: 10px;"></i>
+                <i class="fas fa-file-word" style="font-size: 20px; color: #2980b9;"></i>
+                <span style="font-size: 12px; margin-top: 5px;">انقر لاختيار ملف (PDF أو Word)</span>
             </div>
-            <div id="extractorStats" style="font-size: 12px; font-weight: bold; text-align: center; color: var(--success);"></div>
-            <textarea id="extractedCodesArea" style="height: 120px;" placeholder="الأكواد ستظهر هنا..."></textarea>
+            <div id="extractorStats" style="font-size: 13px; font-weight: bold; text-align: center; color: var(--primary);"></div>
+            <textarea id="extractedCodesArea" style="height: 120px;" placeholder="الأكواد المستخرجة ستظهر هنا..."></textarea>
             <button class="btn btn-primary" onclick="transferCodes()" style="padding: 12px;">نقل الأكواد للاستديو</button>
         </div>
     </div>
 
     <div class="sidebar">
-        <div class="logo-area">SMART CREATOR <span>MOBILE & WEB EDITION</span></div>
+        <div class="logo-area">SMART CREATOR <span>PRO VECTOR EDITION</span></div>
         <div class="nav-menu">
             <div class="nav-item"><i class="fas fa-chart-pie"></i> لوحة المعلومات</div>
-            <div class="nav-item" style="color: var(--success);" onclick="toggleModal(true)"><i class="fas fa-file-export"></i> استخراج من وورد</div>
+            <div class="nav-item" style="color: var(--success);" onclick="toggleModal(true)"><i class="fas fa-magic"></i> استخراج الأكواد</div>
             <div class="nav-item active"><i class="fas fa-paint-brush"></i> التصميم</div>
             <div class="nav-item"><i class="fas fa-cog"></i> الإعدادات</div>
         </div>
@@ -287,6 +294,9 @@
     </div>
 
     <script>
+        // إعداد PDF.js Worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
         const canvas = document.getElementById('previewCanvas');
         const ctx = canvas.getContext('2d');
         let img = new Image();
@@ -306,37 +316,98 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 2500);
         }
 
-        // --- نظام استخراج الوورد ---
+        // --- محرك استخراج الأكواد الشامل (Word + PDF) ---
         function toggleModal(show) { document.getElementById('extractorModal').style.display = show ? 'flex' : 'none'; }
-        document.getElementById('wordFileInput').addEventListener('change', function(event) {
+        
+        document.getElementById('documentFileInput').addEventListener('change', async function(event) {
             const file = this.files[0];
             if (!file) return;
-            document.getElementById('extractorStats').innerText = "جاري القراءة والتحليل...";
+            
+            const statsElement = document.getElementById('extractorStats');
+            statsElement.innerText = "جاري القراءة والتحليل...";
+            statsElement.style.color = "var(--primary)";
+            
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            
+            if (fileExt === 'docx') {
+                extractFromWord(file);
+            } else if (fileExt === 'pdf') {
+                extractFromPDF(file);
+            } else {
+                statsElement.innerText = "صيغة الملف غير مدعومة. يرجى رفع ملف Word أو PDF.";
+                statsElement.style.color = "var(--danger)";
+            }
+        });
+
+        // استخراج من الوورد
+        function extractFromWord(file) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 mammoth.extractRawText({arrayBuffer: reader.result})
-                    .then(result => {
-                        const text = result.value;
-                        const regex = /\b\d{5}[^\d]*\d{5}\b/g;
-                        const matches = text.match(regex) || [];
-                        let cleanedCodes = matches.map(code => code.replace(/[^\d]/g, '')).filter(code => code.length === 10);
-                        cleanedCodes = [...new Set(cleanedCodes)];
-                        document.getElementById('extractedCodesArea').value = cleanedCodes.join('\n');
-                        document.getElementById('extractorStats').innerText = `تم العثور على ${cleanedCodes.length} كرت بنجاح!`;
-                    }).catch(err => {
-                        document.getElementById('extractorStats').innerText = "خطأ في قراءة الملف.";
+                    .then(result => processExtractedText(result.value))
+                    .catch(err => {
+                        document.getElementById('extractorStats').innerText = "حدث خطأ أثناء قراءة ملف الوورد.";
+                        document.getElementById('extractorStats').style.color = "var(--danger)";
                     });
             };
             reader.readAsArrayBuffer(file);
-        });
+        }
+
+        // استخراج من الـ PDF (مثل ملفات UniFi)
+        async function extractFromPDF(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+                let fullText = "";
+                
+                // المرور على جميع صفحات الـ PDF
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(" ");
+                    fullText += pageText + " ";
+                }
+                processExtractedText(fullText);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('extractorStats').innerText = "حدث خطأ أثناء قراءة ملف الـ PDF.";
+                document.getElementById('extractorStats').style.color = "var(--danger)";
+            }
+        }
+
+        // الخوارزمية الموحدة لمعالجة النصوص وإيجاد الأكواد
+        function processExtractedText(text) {
+            // يبحث عن 5 أرقام، يليها أي شيء غير رقمي (مثل - أو مسافة)، ثم 5 أرقام (مثل: 75850-28071)
+            const regex = /\b\d{5}[^\d]*\d{5}\b/g;
+            const matches = text.match(regex) || [];
+            
+            // إزالة الفواصل والشرطات، والاحتفاظ بـ 10 أرقام متصلة فقط
+            let cleanedCodes = matches.map(code => code.replace(/[^\d]/g, '')).filter(code => code.length === 10);
+            
+            // إزالة الكروت المتكررة إن وجدت
+            cleanedCodes = [...new Set(cleanedCodes)];
+
+            const statsElement = document.getElementById('extractorStats');
+            if (cleanedCodes.length > 0) {
+                document.getElementById('extractedCodesArea').value = cleanedCodes.join('\n');
+                statsElement.innerText = `تم العثور على ${cleanedCodes.length} كرت بنجاح! 🎉`;
+                statsElement.style.color = "var(--success)";
+            } else {
+                document.getElementById('extractedCodesArea').value = "";
+                statsElement.innerText = "لم يتم العثور على أي أكواد صالحة في الملف.";
+                statsElement.style.color = "var(--warning)";
+            }
+        }
+
         function transferCodes() {
             const codes = document.getElementById('extractedCodesArea').value;
-            if(codes.trim() === '') { alert("لا توجد أكواد!"); return; }
+            if(codes.trim() === '') { alert("لا توجد أكواد للنقل!"); return; }
             document.getElementById('bulkCodes').value = codes;
             toggleModal(false);
             autoSaveAndUpdate();
             showToast("تم نقل الأكواد للاستديو!");
         }
+        // ----------------------------------------------
 
         // --- معالجة الصور ---
         document.getElementById('imageLoader').addEventListener('change', function(e) {
@@ -347,7 +418,6 @@
                     document.getElementById('imgWidthPx').value = img.width;
                     document.getElementById('imgHeightPx').value = img.height;
                     centerText();
-                    
                     try { localStorage.setItem('smartCreatorSavedImage', originalImgData); } catch(e) { console.warn("حجم الصورة كبير"); }
                 }
                 img.src = event.target.result;
@@ -424,8 +494,8 @@
                 borderColor: document.getElementById('borderColor').value,
                 cardWidthMM: document.getElementById('cardWidthMM').value,
                 cardHeightMM: document.getElementById('cardHeightMM').value,
-                marginTopMM: document.getElementById('marginTopMM').value, // تم إضافة الهامش العلوي
-                marginLeftMM: document.getElementById('marginLeftMM').value, // تم إضافة الهامش الجانبي
+                marginTopMM: document.getElementById('marginTopMM').value,
+                marginLeftMM: document.getElementById('marginLeftMM').value,
                 letterSpacing: document.getElementById('letterSpacing').value,
                 fontSize: document.getElementById('fontSize').value,
                 textColor: document.getElementById('textColor').value,
@@ -521,7 +591,6 @@
                 const cardWidthMM = parseFloat(document.getElementById('cardWidthMM').value);
                 const cardHeightMM = parseFloat(document.getElementById('cardHeightMM').value);
                 
-                // حساب الهوامش لطباعة PDF
                 const pageMarginTop = parseFloat(document.getElementById('marginTopMM').value) || 0;
                 const pageMarginLeft = parseFloat(document.getElementById('marginLeftMM').value) || 0;
 
@@ -548,7 +617,6 @@
                     const colPos = indexInPage % cols;
                     const rowPos = Math.floor(indexInPage / cols);
                     
-                    // إضافة الهوامش إلى إحداثيات الطباعة
                     const pdfX = pageMarginLeft + (colPos * cardWidthMM);
                     const pdfY = pageMarginTop + (rowPos * cardHeightMM);
 
